@@ -16,6 +16,7 @@ debug = False
 import sys
 import time
 import PostyUI
+import textwrap
 import requests
 import asyncio
 from PyQt5.QtWidgets import QApplication, QMainWindow
@@ -55,9 +56,6 @@ class PostyApp(QMainWindow, PostyUI.Ui_MainWindow):
         # Connect listener for post button
         self.postButton.clicked.connect(self.createPayload)
 
-        # Create listener for tab change events
-
-
     def createPayload(self):
         if (self.tabWidget.currentIndex() == 0):
             idfa = '"' + self.installTabUserAgentValue.text() + '"'
@@ -65,30 +63,29 @@ class PostyApp(QMainWindow, PostyUI.Ui_MainWindow):
             origip = '"' + self.eventTabIPValue.text() + '"'
             appguid = '"' + self.appGUIDValue.text() + '"'
 
-            PostyApp.payload = """
-{
-	"data": {
-		"usertime": "",
-		"device_ua": %s,
-		"conversion_data": {
-			"utm_campaign": "",
-			"utm_medium": "",
-			"utm_source": ""
-		},
-		"origination_ip": %s,
-		"device_ids": {
-			"udid": "",
-			"mac": "",
-			"idfa": %s,
-			"imei": "",
-			"adid": "",
-			"odin": "",
-			"android_id": ""
-		}
-	},
-	"kochava_app_id": %s,
-    "action": "install"
-}""" % (ua, origip, idfa, appguid)
+            PostyApp.payload = """{
+                                    "data": {
+                                        "usertime": "",
+                                        "device_ua": %s,
+                                        "conversion_data": {
+                                            "utm_campaign": "",
+                                            "utm_medium": "",
+                                            "utm_source": ""
+                                        },
+                                        "origination_ip": %s,
+                                        "device_ids": {
+                                            "udid": "",
+                                            "mac": "",
+                                            "idfa": %s,
+                                            "imei": "",
+                                            "adid": "",
+                                            "odin": "",
+                                            "android_id": ""
+                                        }
+                                    },
+                                    "kochava_app_id": %s,
+                                    "action": "install"
+                                }""" % (ua, origip, idfa, appguid)
             self.installTabPayloadPreview.clear()
             self.installTabPayloadPreview.setPlainText(PostyApp.payload)
 
@@ -103,11 +100,11 @@ class PostyApp(QMainWindow, PostyUI.Ui_MainWindow):
             appguid = '"' + self.appGUIDValue.text() + '"'
 
             PostyApp.payload = """{
-                                        "data": {
-                                            "app_version": %s,
-                                            "device_ids": {
-                                                "idfa": %s
-                                            },
+                                    "data": {
+                                        "app_version": %s,
+                                        "device_ids": {
+                                            "idfa": %s
+                                        },
                                         "device_ua": %s,
                                         "device_ver": %s,
                                         "event_name": %s,
@@ -118,7 +115,7 @@ class PostyApp(QMainWindow, PostyUI.Ui_MainWindow):
                                             "currency": "USD",
                                             "sum": 100
                                         }
-                                    },
+                                        },
                                     "action": "event",
                                     "kochava_app_id": %s
                                 }""" % (appversion, idfa, ua, deviceversion, eventname, origip, appguid)
@@ -127,11 +124,11 @@ class PostyApp(QMainWindow, PostyUI.Ui_MainWindow):
 
             return PostyApp.payload
         elif (self.tabWidget.currentIndex() == 2):
-            PostyApp.payload = """{
-                                        "data": {
-                                        }
-                                    },
-                                }"""
+            PostyApp.payload = """
+{
+    "data": {
+    },
+}"""
             self.customTabPayloadValue.clear()
             self.customTabPayloadValue.setPlainText(PostyApp.payload)
 
